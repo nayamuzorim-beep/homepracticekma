@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2023 글로벌 기후 정책 및 탄소인지예산 통합 보고서</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #059669; /* Emerald 600 */
+            --secondary-color: #0284c7; /* Sky 600 */
+            --accent-color: #d97706; /* Amber 600 */
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --brown-tag: #92400e;
+            --green-tag: #166534;
+            --grey-tag: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation Grid */
+        .nav-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            border-left: 5px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        /* Visual Container */
+        .visual-container {
+            height: 300px;
+            position: relative;
+            margin-bottom: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Text Content */
+        .content-text {
+            font-size: 0.95rem;
+            color: #475569;
+            text-align: justify;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 10px;
+            background: #fff;
+        }
+
+        .content-text::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-text::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .content-text ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .content-text li {
+            margin-bottom: 8px;
+        }
+
+        /* Tables */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .styled-table thead tr {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        /* Metrics & Badges */
+        .metric-box {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .metric {
+            text-align: center;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .metric h4 { font-size: 0.8rem; color: var(--text-sub); }
+        .metric p { font-size: 1.2rem; font-weight: bold; color: var(--secondary-color); }
+
+        .tag-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .bg-green { background-color: var(--green-tag); }
+        .bg-grey { background-color: var(--grey-tag); }
+        .bg-brown { background-color: var(--brown-tag); }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>2023 글로벌 기후 정책 및 탄소인지예산 통합 보고서</h1>
+        <p>Global Climate Policy & Carbon Sensitive Budget Dashboard | Philippines CCC Analysis</p>
+    </header>
+
+    <!-- Navigation for fast scroll -->
+    <div class="nav-grid">
+        <button class="nav-btn" onclick="document.getElementById('sec-global').scrollIntoView({behavior: 'smooth'})">글로벌 동향</button>
+        <button class="nav-btn" onclick="document.getElementById('sec-impact').scrollIntoView({behavior: 'smooth'})">기후위기 영향</button>
+        <button class="nav-btn" onclick="document.getElementById('sec-oecd').scrollIntoView({behavior: 'smooth'})">OECD 녹색예산</button>
+        <button class="nav-btn" onclick="document.getElementById('sec-phil-budget').scrollIntoView({behavior: 'smooth'})">필리핀 예산현황</button>
+        <button class="nav-btn" onclick="document.getElementById('sec-lccap').scrollIntoView({behavior: 'smooth'})">지방정부(LCCAP)</button>
+        <button class="nav-btn" onclick="document.getElementById('sec-france').scrollIntoView({behavior: 'smooth'})">프랑스 사례</button>
+        <button class="nav-btn" onclick="document.getElementById('sec-korea').scrollIntoView({behavior: 'smooth'})">한국 현황</button>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <!-- 1. Global Trends -->
+        <div class="card" id="sec-global">
+            <div class="card-header">
+                <div class="card-title">1. 글로벌 동향 및 개요</div>
+            </div>
+            <div class="visual-container" style="flex-direction: column; height: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>주요 내용</th>
+                            <th>관련 기관</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>글로벌 규범</td>
+                            <td>2050 탄소중립, 파리협정</td>
+                            <td>UNFCCC</td>
+                        </tr>
+                        <tr>
+                            <td>재정 도구</td>
+                            <td>탄소인지예산, CBT</td>
+                            <td>OECD, UNDP</td>
+                        </tr>
+                        <tr>
+                            <td>선도 모델</td>
+                            <td>NAP, NDC 이행 계획</td>
+                            <td>필리핀 CCC</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="content-text">
+                <p><strong>전 지구적 기후위기 심화에 따른 탄소중립 선언:</strong> 2020년을 기점으로 EU, 중국, 일본에 이어 한국도 2050 탄소중립을 선언하며 기후변화 대응을 위한 적극적인 정책 수립을 추진하고 있습니다. 기후위기가 현실화됨에 따라 전 세계적으로 탄소중립이 새로운 국제규범으로 부상하고 있으며, 이에 대응하기 위한 국가적 차원의 재정 운용 전략이 요구됩니다.</p>
+                <p><strong>재정 정책의 역할 강화:</strong> 정부의 수입과 지출 전반에서 탄소 배출 억제 메커니즘을 구축하기 위해 탄소인지예산제도와 같은 기후 친화적 재정 프로그램 운영이 필수적입니다. 필리핀은 국가 적응 계획(NAP)과 국가 결정 기여(NDC) 이행 계획을 수립하며 동남아시아 내 기후 회복력 구축의 선도적 모델을 제시하고 있습니다. 본 보고서는 필리핀 CCC 연례 보고서와 글로벌 사례를 중심으로 기후 정책 개발, 모니터링, 기후 재무 태깅 시스템의 확산을 분석합니다.</p>
+            </div>
+        </div>
+
+        <!-- 2. Climate Impact Analysis (Chart) -->
+        <div class="card" id="sec-impact">
+            <div class="card-header">
+                <div class="card-title">2. 기후위기 경제적·사회적 영향</div>
+            </div>
+            <div class="visual-container">
+                <canvas id="impactChart"></canvas>
+            </div>
+            <div class="content-text">
+                <p><strong>지구 열대화(Global Boiling) 시대의 도래:</strong> 2024년 전 지구 평균 표면 온도가 산업화 이전 대비 1.5℃를 넘어서며 파리협정의 1차 목표 기준선을 초과하는 등 심각한 온난화 현상이 관측되었습니다. 이는 단순한 온난화를 넘어 극단적인 기상 이변이 일상화되는 단계를 의미합니다.</p>
+                <p><strong>막대한 경제적 손실:</strong> 최근 10년간 기후 위기로 인한 전 세계 경제 피해액은 약 2조 달러(약 2.8천조 원)에 달하며, 이는 2008년 글로벌 금융위기와 맞먹는 수준입니다. 조기 사망자 수는 약 35만 명을 넘어섰고, 필리핀과 같은 기후 취약 국가는 해수면 상승과 태풍으로 생존의 위협을 받고 있습니다. 한국 또한 에너지 다소비 산업 구조로 인해 고탄소 생태계의 전환 압박을 크게 받고 있어, 탄소 가격 시그널 강화가 절실한 상황입니다.</p>
+            </div>
+        </div>
+
+        <!-- 4. OECD Green Budgeting (Radar Chart) -->
+        <div class="card" id="sec-oecd">
+            <div class="card-header">
+                <div class="card-title">3. OECD 녹색예산 도입 지수</div>
+            </div>
+            <div class="visual-container">
+                <canvas id="oecdChart"></canvas>
+            </div>
+            <div class="content-text">
+                <p><strong>OECD 국가의 제도 확산:</strong> 2021년 14개국에 불과했던 녹색예산 도입 국가는 2024년 24개국으로 늘어나며 국제 표준으로 정착 중입니다. 영국(0.80), 아일랜드(0.75), 노르웨이(0.70)가 선도적인 위치에 있으며, 한국은 0.51로 OECD 평균 수준입니다.</p>
+                <p><strong>다양한 정책 수단의 활용:</strong> 상위 국가들은 환경 영향 평가, 녹색예산 태깅, 유해 조세지출 검토 등 9~11개의 다양한 수단을 복합적으로 적용하고 있습니다. 반면 한국은 법적 기반은 마련되었으나 활용 수단 수에서는 아직 확대가 필요합니다. 성공적인 제도를 위해서는 재정 부처와 환경 부처 간의 강력한 협력 거버넌스 구축이 필수적입니다. 이는 예산 편성 과정에서 기후 목표가 단순한 구호가 아닌 실질적인 배분 기준으로 작용하게 합니다.</p>
+            </div>
+        </div>
+
+        <!-- 7. Philippines Budget Allocation (Stacked Bar) -->
+        <div class="card" id="sec-phil-budget">
+            <div class="card-header">
+                <div class="card-title">4. 필리핀 기후 예산 추이 (완화 vs 적응)</div>
+            </div>
+            <div class="visual-container">
+                <canvas id="phBudgetChart"></canvas>
+            </div>
+            <div class="content-text">
+                <p><strong>적응(Adaptation) 중심의 예산 구조:</strong> 필리핀 기후변화 지출 태깅(CCET) 데이터를 분석하면, 예산의 대부분이 기후 적응 분야에 집중되어 있음을 알 수 있습니다. 2024년 기준 적응 예산은 4,419억 페소에 달하며, 이는 태풍, 홍수 등 빈번한 자연재해에 대한 국가적 생존 전략을 반영합니다.</p>
+                <p><strong>제도의 주류화:</strong> 2021년 대비 기후 태깅 참여 기관 수가 81% 증가하여 160개 기관이 참여하고 있습니다. 이는 CCET 시스템이 공공 재정 관리의 핵심 도구로 자리 잡았음을 시사합니다. 필리핀은 예산관리부(DBM)와 CCC의 합동 회람을 통해 국가 및 지방 정부의 모든 사업을 분류하고, CCET 헬프데스크를 운영하여 데이터의 정확성과 일관성을 확보하고 있습니다. 이러한 데이터 기반 접근은 정책 결정자들이 기후 목표 기여도를 명확히 파악하는 데 도움을 줍니다.</p>
+            </div>
+        </div>
+
+        <!-- 8. LCCAP Progress (Line Chart) -->
+        <div class="card" id="sec-lccap">
+            <div class="card-header">
+                <div class="card-title">5. 지방정부 기후행동계획(LCCAP) 제출률</div>
+            </div>
+            <div class="visual-container">
+                <canvas id="lccapChart"></canvas>
+            </div>
+            <div class="content-text">
+                <p><strong>지방 정부 역량 강화의 성과:</strong> CCC의 지속적인 기술 지원과 역량 강화 프로그램(CORE) 덕분에 지방 정부의 LCCAP 제출률은 2021년 41.7%에서 2023년 86.5%로 비약적으로 상승했습니다. 이는 단순한 행정 절차의 이행을 넘어, 지역 단위의 기후 위기 대응 체계가 마련되고 있음을 의미합니다.</p>
+                <p><strong>디지털 전환과 과학적 접근:</strong> '전자 지방 기후 계획(eLCCAP)' 도입을 통해 계획 수립의 디지털화와 표준화를 도모하고 있으며, 지역별 온실가스 인벤토리(GHGI) 산정 교육을 통해 데이터에 기반한 감축 목표 설정을 지원하고 있습니다. 또한 피플스 서바이벌 펀드(PSF) 등 기후 기금 접근성을 높이기 위한 제안서 작성 교육을 병행하여, 계획이 실제 예산 집행과 사업 추진으로 이어지도록 독려하고 있습니다.</p>
+            </div>
+        </div>
+
+        <!-- 10. Sectoral Spending (Doughnut) -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">6. 필리핀 분야별 기후 지출 비중 (2023)</div>
+            </div>
+            <div class="visual-container">
+                <canvas id="sectorChart"></canvas>
+            </div>
+            <div class="content-text">
+                <p><strong>수자원 안보 최우선:</strong> 필리핀의 2023년 기후 지출 중 65.7%가 수자원 자급(Water Sufficiency) 분야에 투입되었습니다. 이는 공공사업교통부(DPWH) 주도의 홍수 조절 및 치수 사업이 국가적 최우선 과제임을 보여줍니다.</p>
+                <p><strong>지속 가능 에너지의 성장:</strong> 철도 및 친환경 교통망 확충 노력에 힘입어 지속 가능 에너지 분야 지출 비중이 27.6%까지 상승했습니다. 식량 안보를 위한 농업 부문의 재정 투입도 꾸준히 이루어지고 있습니다. 이러한 지출 구조는 기후 위기로 인한 직접적인 재난 방지(적응)와 장기적인 탄소 저감(완화) 사이의 전략적 균형을 찾으려는 노력을 보여줍니다. 특히 파시그-마리키나 강 하도 개선 등 대형 인프라 프로젝트에 막대한 예산이 투입되고 있습니다.</p>
+            </div>
+        </div>
+
+        <!-- 15. France Green Budgeting (Interactive List) -->
+        <div class="card" id="sec-france">
+            <div class="card-header">
+                <div class="card-title">7. 프랑스 녹색예산 태깅 방법론</div>
+            </div>
+            <div class="visual-container" style="display: block; overflow-y: auto;">
+                <div class="metric-box">
+                    <div class="metric" style="border-left: 4px solid var(--green-tag);">
+                        <h4>긍정적 예산</h4>
+                        <p>381억 &euro;</p>
+                    </div>
+                    <div class="metric" style="border-left: 4px solid var(--brown-tag);">
+                        <h4>부정적 예산</h4>
+                        <p>100억 &euro;</p>
+                    </div>
+                </div>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px; padding: 10px; background: #ecfdf5; border-radius: 8px;">
+                        <span class="tag-badge bg-green">Green</span>
+                        <strong>에너지 전환 지원:</strong> 재생 에너지, 건물 효율화 등 환경 목표에 직접 기여.
+                    </li>
+                    <li style="margin-bottom: 10px; padding: 10px; background: #f3f4f6; border-radius: 8px;">
+                        <span class="tag-badge bg-grey">Grey</span>
+                        <strong>일반 행정비:</strong> 환경에 유의미한 영향이 없거나 중립적인 지출 (약 90%).
+                    </li>
+                    <li style="margin-bottom: 10px; padding: 10px; background: #fff7ed; border-radius: 8px;">
+                        <span class="tag-badge bg-brown">Brown</span>
+                        <strong>화석연료 보조금:</strong> 항공유 면세, 농업용 경유 지원 등 환경에 유해한 영향을 줌.
+                    </li>
+                </ul>
+            </div>
+            <div class="content-text">
+                <p><strong>세계 최초의 포괄적 평가:</strong> 프랑스는 2020년부터 예산안 전체에 대해 6대 환경 목표(기후 완화/적응, 수자원, 순환경제 등)를 기준으로 영향을 평가합니다. 특히 돋보이는 점은 환경에 해로운 '갈색 예산'을 식별하여 공개한다는 점입니다.</p>
+                <p><strong>복합 영향의 분석:</strong> 원자력과 같이 탄소 배출은 적으나 폐기물 문제가 있는 경우와 같이 복합적인 영향을 미치는 사업도 별도로 분류하여 관리합니다. 조세지출까지 분석 대상에 포함시켜, 숨겨진 보조금이 환경 정책과 상충되지 않는지 감시합니다. 이러한 투명한 정보 공개는 의회가 예산 심의 과정에서 기후 관점을 반영하도록 돕는 강력한 도구가 되며, '갈색' 지출을 점진적으로 줄이고 '녹색' 지출을 늘리는 재정 구조 전환의 기초가 됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 17. Korea Jeonnam Case (KPI Cards) -->
+        <div class="card" id="sec-korea">
+            <div class="card-header">
+                <div class="card-title">8. 한국 지자체 사례: 전라남도</div>
+            </div>
+            <div class="visual-container" style="display: flex; flex-direction: column; justify-content: center;">
+                <div style="width:100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="metric">
+                        <h4>2025 감축 예산액</h4>
+                        <p>6,016억 원</p>
+                        <span style="font-size: 0.8rem; color: red;">▲ 20.4%</span>
+                    </div>
+                    <div class="metric">
+                        <h4>예상 감축량</h4>
+                        <p>21.5만 톤</p>
+                        <span style="font-size: 0.8rem; color: red;">▲ 37.2%</span>
+                    </div>
+                    <div class="metric">
+                        <h4>대상 사업 수</h4>
+                        <p>219개</p>
+                    </div>
+                    <div class="metric">
+                        <h4>예산 효율성</h4>
+                        <p>89톤/억 원</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content-text">
+                <p><strong>선제적인 지방 정부 모델:</strong> 전라남도는 광역 지자체 중 선도적으로 온실가스감축인지 예산서를 작성하며, 2025년 기준 전체 예산의 4.8%를 감축 예산으로 편성했습니다. 이는 전년 대비 예산 규모와 예상 감축량 모두 크게 증가한 수치로, 지방 재정 운영에 기후 목표가 내재화되고 있음을 보여줍니다.</p>
+                <p><strong>제도의 확산과 과제:</strong> 2023년 시범 운영을 거쳐 전 부서로 대상을 확대하였으며, 순천, 나주 등 기초 지자체로의 확산을 독려하고 있습니다. 그러나 현재는 국가 표준 원단위를 사용하고 있어, 농축수산 등 전남의 지역적 특성을 반영한 고유의 감축량 산정 방법론 개발이 필요합니다. 또한 단순한 예산서 작성을 넘어, 감축 실적이 우수한 사업에 인센티브를 부여하는 등 실질적인 환류 체계 구축이 향후 과제로 남아 있습니다.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2023-2024 Global Climate Policy Report Dashboard. Data Sources: Philippines CCC, OECD, World Bank, KIPF.</p>
+        <p>본 대시보드는 HTML/JS 기반으로 제작되었으며, 사용자 인터랙션을 포함하고 있습니다.</p>
+    </footer>
+</div>
+
+<script>
+    // 1. Economic Impact Chart
+    const ctxImpact = document.getElementById('impactChart').getContext('2d');
+    new Chart(ctxImpact, {
+        type: 'bar',
+        data: {
+            labels: ['지구 기온 상승(℃)', '경제 피해액(조 달러)', '조기 사망자(십만 명)'],
+            datasets: [{
+                label: '2023-2024 주요 지표',
+                data: [1.55, 2.0, 3.54],
+                backgroundColor: ['#ef4444', '#f59e0b', '#64748b'],
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: '기후위기 주요 영향 지표' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // 2. OECD Radar Chart
+    const ctxOecd = document.getElementById('oecdChart').getContext('2d');
+    new Chart(ctxOecd, {
+        type: 'radar',
+        data: {
+            labels: ['녹색예산 지수', '법적 기반', '활용 수단 수', '거버넌스', '투명성'],
+            datasets: [{
+                label: '영국 (선도국)',
+                data: [80, 90, 95, 85, 90],
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.2)'
+            }, {
+                label: '한국',
+                data: [51, 80, 45, 60, 50],
+                borderColor: '#0284c7',
+                backgroundColor: 'rgba(2, 132, 199, 0.2)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { suggestMin: 0, suggestMax: 100 }
+            }
+        }
+    });
+
+    // 3. Philippines Budget Stacked Bar
+    const ctxPhBudget = document.getElementById('phBudgetChart').getContext('2d');
+    new Chart(ctxPhBudget, {
+        type: 'bar',
+        data: {
+            labels: ['2022년', '2023년', '2024년'],
+            datasets: [{
+                label: '적응 (Adaptation)',
+                data: [263.42, 411.21, 441.91],
+                backgroundColor: '#0ea5e9'
+            }, {
+                label: '완화 (Mitigation)',
+                data: [26.31, 53.29, 15.50],
+                backgroundColor: '#10b981'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, title: {display: true, text: '십억 페소'} }
+            }
+        }
+    });
+
+    // 4. LCCAP Line Chart
+    const ctxLccap = document.getElementById('lccapChart').getContext('2d');
+    new Chart(ctxLccap, {
+        type: 'line',
+        data: {
+            labels: ['2021년', '2022년', '2023년'],
+            datasets: [{
+                label: 'LCCAP 제출률 (%)',
+                data: [41.69, 80.29, 86.53],
+                borderColor: '#d97706',
+                backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+
+    // 5. Sector Chart
+    const ctxSector = document.getElementById('sectorChart').getContext('2d');
+    new Chart(ctxSector, {
+        type: 'doughnut',
+        data: {
+            labels: ['수자원 자급', '지속가능 에너지', '식량 안보', '환경 안정성', '기타'],
+            datasets: [{
+                data: [65.7, 27.6, 4.3, 0.9, 1.5],
+                backgroundColor: [
+                    '#3b82f6', // Water - Blue
+                    '#f59e0b', // Energy - Yellow
+                    '#10b981', // Food - Green
+                    '#64748b', // Env - Grey
+                    '#cbd5e1'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
